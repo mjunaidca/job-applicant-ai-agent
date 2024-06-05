@@ -26,4 +26,4 @@ RUN chmod +x /code/create_kafka_topics.py /code/register_schemas.sh /code/kong_g
 RUN ls -l /code/
 
 # Run the create_kafka_topics.py script and then the register_schemas.sh script
-CMD ["/bin/bash", "-c", "python /code/create_kafka_topics.py && /code/register_schemas.sh && /bin/bash /code/kong_gateway_startup.sh"]
+CMD ["/bin/bash", "-c", "python /code/create_kafka_topics.py && /bin/bash /code/kong_gateway_startup.sh  && /code/register_schemas.sh "]

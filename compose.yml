@@ -40,12 +40,31 @@ services:
     build:
       context: ./ai-recom-agent-service
       dockerfile: Dockerfile.dev
-    container_name: AIRecommendationsEngineCont
+    container_name: JobCVMatchAICont
     env_file: "./ai-recom-agent-service/.env"
     ports:
       - "9001:9001"
     volumes:
       - ./ai-recom-agent-service:/code
+      - ./kafka_schemas/python_schemas:/code/__generated__
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - kafka-schema-compiler
+  
+  job-cv-match-ai-service:
+    image: job-cv-match-ai-img
+    restart: always
+    build:
+      context: ./job-cv-match-ai
+      dockerfile: Dockerfile.dev
+    container_name: AIRecommendationsEngineCont
+    env_file: "./job-cv-match-ai/.env"
+    ports:
+      - "9003:9003"
+    volumes:
+      - ./job-cv-match-ai:/code
       - ./kafka_schemas/python_schemas:/code/__generated__
     depends_on:
       - kafka-1
@@ -163,25 +182,6 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka-1:19092,kafka-2:19092,kafka-3:19092"
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
-
-  kafka-schema-compiler:
-    build:
-      context: ./kafka_schemas
-      dockerfile: Dockerfile
-    image: kafka-schema-compiler-img
-    container_name: kafka-schemas
-    depends_on:
-      - schema-registry
-      - kafka-1
-      - kafka-2
-      - kafka-3
-      - kong
-      - kong-migrations
-      - kong-migrations-up
-      - db
-      - pgadmin
-    volumes:
-      - ./kafka_schemas:/code
 
   postgres_test_db:
     image: postgres:latest # Use the official PostgreSQL image
@@ -318,6 +318,26 @@ services:
     tty: true
     volumes:
       - kong_data:/var/lib/postgresql/data
+
+  kafka-schema-compiler:
+    build:
+      context: ./kafka_schemas
+      dockerfile: Dockerfile
+    restart: on-failure
+    image: kafka-schema-compiler-img
+    container_name: kafka-schemas
+    depends_on:
+      - schema-registry
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - kong
+      - kong-migrations
+      - kong-migrations-up
+      - db
+      - pgadmin
+    volumes:
+      - ./kafka_schemas:/code
 
 volumes:
   postgres_test_db:
