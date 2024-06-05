@@ -11,8 +11,7 @@ KAFKA_BOOTSTRAP_SERVER = config("KAFKA_BOOTSTRAP_SERVERS", cast=str)
 KAFKA_TODO_TOPIC = config("TODO_TOPIC", cast=str)
 KAFKA_CONSUMER_TODO_GROUP_ID = config("KAFKA_CONSUMER_TODO_GROUP_ID", cast=str)
 
-OPENAI_API_KEY = "sk-proj-dljeElKXuWY3cb66lOGfT3BlbkFJnFOpyOTTsqFHO3l2Dzay"
-# OPENAI_API_KEY = config("OPENAI_API_KEY", cast=Secret)
+OPENAI_API_KEY = config("OPENAI_API_KEY", cast=Secret)
 SERPER_API_KEY = config("SERPER_API_KEY", cast=Secret)
 
 SMTP_HOST = config("SMTP_HOST", cast=str)
